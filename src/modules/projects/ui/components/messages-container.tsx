@@ -4,31 +4,41 @@ import { MessageCard } from "./message-card";
 import { MessageForm } from "./message-form";
 import { useEffect, useRef, useState } from "react";
 import { Fragment } from "@/generated/prisma";
+import { Loader2Icon } from "lucide-react";
 
 interface Props {
     projectId: string;
+    activeFragment: Fragment | null;
+    onFragmentSelect: (fragment: Fragment | null) => void;
 };
 
-export const MessagesContainer = ({ projectId }: Props) => {
+export const MessagesContainer = ({ projectId, activeFragment, onFragmentSelect }: Props) => {
     const bottomRef = useRef<HTMLDivElement>(null);
     const trpc = useTRPC();
-    const [activeFragmentId, setActiveFragmentId] = useState<string | null>(null);
+    const [isGenerating, setIsGenerating] = useState(false);
     
-    const { data: messages } = useSuspenseQuery(trpc.messages.getMany.queryOptions({ projectId }));
+    const { data: messages, refetch } = useSuspenseQuery(trpc.messages.getMany.queryOptions({ projectId }));
 
-    useEffect(() => {
-        const lastAssistantMessage = messages.findLast(
-            (message) => message.role === "ASSISTANT"
-        );
-
-        if (lastAssistantMessage?.fragment) {
-            setActiveFragmentId(lastAssistantMessage.fragment.id);
-        }
-    }, [messages]);
+    // Removed auto-selection - only select when user clicks
 
     useEffect(() => {
         bottomRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages]);
+
+    useEffect(() => {
+        // Check if we're waiting for an AI response
+        const lastMessage = messages[messages.length - 1];
+        if (lastMessage?.role === "USER") {
+            setIsGenerating(true);
+            // Poll for new messages every 2 seconds
+            const interval = setInterval(() => {
+                refetch();
+            }, 2000);
+            return () => clearInterval(interval);
+        } else {
+            setIsGenerating(false);
+        }
+    }, [messages, refetch]);
 
     return (
         <div className="flex flex-col flex-1 min-h-0">
@@ -41,11 +51,17 @@ export const MessagesContainer = ({ projectId }: Props) => {
                             role={message.role}
                             fragment={message.fragment}
                             createdAt={message.createdAt}
-                            isActiveFragment={message.fragment?.id === activeFragmentId}
-                            onFragmentClick={(fragment: Fragment) => setActiveFragmentId(fragment.id)}
+                            isActiveFragment={message.fragment?.id === activeFragment?.id}
+                            onFragmentClick={onFragmentSelect}
                             type={message.type}
                         />
                     ))}
+                    {isGenerating && (
+                        <div className="flex items-center gap-2 pl-2 pb-4 text-muted-foreground">
+                            <Loader2Icon className="size-4 animate-spin" />
+                            <span className="text-sm">Generating code...</span>
+                        </div>
+                    )}
                     <div ref={bottomRef} />
                 </div>
             </div>
