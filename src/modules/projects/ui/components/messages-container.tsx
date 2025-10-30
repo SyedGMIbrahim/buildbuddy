@@ -2,7 +2,8 @@ import { useTRPC } from "@/trpc/client";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { MessageCard } from "./message-card";
 import { MessageForm } from "./message-form";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { Fragment } from "@/generated/prisma";
 
 interface Props {
     projectId: string;
@@ -11,6 +12,7 @@ interface Props {
 export const MessagesContainer = ({ projectId }: Props) => {
     const bottomRef = useRef<HTMLDivElement>(null);
     const trpc = useTRPC();
+    const [activeFragmentId, setActiveFragmentId] = useState<string | null>(null);
     
     const { data: messages } = useSuspenseQuery(trpc.messages.getMany.queryOptions({ projectId }));
 
@@ -19,8 +21,8 @@ export const MessagesContainer = ({ projectId }: Props) => {
             (message) => message.role === "ASSISTANT"
         );
 
-        if (lastAssistantMessage) {
-            //TODO: SET ACTIVE FRAGMENT
+        if (lastAssistantMessage?.fragment) {
+            setActiveFragmentId(lastAssistantMessage.fragment.id);
         }
     }, [messages]);
 
@@ -39,8 +41,8 @@ export const MessagesContainer = ({ projectId }: Props) => {
                             role={message.role}
                             fragment={message.fragment}
                             createdAt={message.createdAt}
-                            isActiveFragment={false}
-                            onFragmentClick={() => {}}
+                            isActiveFragment={message.fragment?.id === activeFragmentId}
+                            onFragmentClick={(fragment: Fragment) => setActiveFragmentId(fragment.id)}
                             type={message.type}
                         />
                     ))}
