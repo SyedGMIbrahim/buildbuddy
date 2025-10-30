@@ -12,6 +12,7 @@ import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/card";
+import { CardItem } from "@/components/ui/3d-card";
 
 const formSchema = z.object({
     value: z.string()
@@ -71,7 +72,7 @@ export const ProjectForm = () => {
     console.log('Form state:', { isPending, errors: form.formState.errors, isValid: form.formState.isValid });
 
     return (
-        <Card className="p-6">
+        <CardItem translateZ="50" className="p-6">
             <div className="mb-4 text-center">
                 <h2 className="text-2xl font-bold flex items-center justify-center gap-2">
                     <SparklesIcon className="size-6 text-primary" />
@@ -150,6 +151,6 @@ export const ProjectForm = () => {
                     </div>
                 </form>
             </Form>
-        </Card>
+        </CardItem>
     );
 };

@@ -6,9 +6,9 @@ import { Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Sparkles, Wand2, Eye, UploadCloud } from "lucide-react";
+import { CardBody, CardContainer, CardItem } from "@/components/ui/3d-card";
 
 export const dynamic = "force-dynamic";
 
@@ -62,51 +62,69 @@ const Page = async () => {
 
           {/* Create Project */}
           <section id="create-project" className="mb-14">
-            <div className="max-w-7xl mx-auto">
-              <ProjectForm />
-            </div>
+            <CardContainer className="max-w-7xl mx-auto">
+              <CardBody className="bg-card text-card-foreground flex flex-col gap-6 rounded-xl border shadow-sm  ">
+                  <ProjectForm />
+              </CardBody>
+            </CardContainer>
           </section>
 
           {/* How it works */}
           <section className="mb-16">
-            <h3 className="text-center text-sm text-muted-foreground mb-4">How it works</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <Card>
-                <CardHeader>
-                  <div className="inline-flex items-center justify-center rounded-md bg-primary/10 text-primary p-2 w-fit mb-1">
+            <h3 className="text-center text-lg text-muted-foreground mb-4">How it works</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-stretch">
+              <CardContainer containerClassName="h-full" className="h-full w-full">
+                <CardBody className="bg-card text-card-foreground rounded-xl border p-6 shadow-sm h-full flex flex-col min-h-[180px]">
+                  <CardItem translateZ={50} className="inline-flex items-center justify-center rounded-md bg-primary/10 text-primary p-2 w-fit mb-1">
                     <Sparkles className="size-4" />
-                  </div>
-                  <CardTitle className="text-base">Describe</CardTitle>
-                  <CardDescription>Tell us what you want to build.</CardDescription>
-                </CardHeader>
-              </Card>
-              <Card>
-                <CardHeader>
-                  <div className="inline-flex items-center justify-center rounded-md bg-primary/10 text-primary p-2 w-fit mb-1">
+                  </CardItem>
+                  <CardItem translateZ={50} as="div" className="text-base font-semibold mt-1">
+                    Describe
+                  </CardItem>
+                  <CardItem translateZ={50} as="p" className="text-muted-foreground">
+                    Tell us what you want to build.
+                  </CardItem>
+                </CardBody>
+              </CardContainer>
+              <CardContainer containerClassName="h-full" className="h-full w-full">
+                <CardBody className="bg-card text-card-foreground rounded-xl border p-6 shadow-sm h-full flex flex-col min-h-[180px]">
+                  <CardItem translateZ={50} className="inline-flex items-center justify-center rounded-md bg-primary/10 text-primary p-2 w-fit mb-1">
                     <Wand2 className="size-4" />
-                  </div>
-                  <CardTitle className="text-base">Generate</CardTitle>
-                  <CardDescription>AI scaffolds components, pages, and data.</CardDescription>
-                </CardHeader>
-              </Card>
-              <Card>
-                <CardHeader>
-                  <div className="inline-flex items-center justify-center rounded-md bg-primary/10 text-primary p-2 w-fit mb-1">
+                  </CardItem>
+                  <CardItem translateZ={50} as="div" className="text-base font-semibold mt-1">
+                    Generate
+                  </CardItem>
+                  <CardItem translateZ={50} as="p" className="text-muted-foreground">
+                    AI scaffolds components, pages, and data.
+                  </CardItem>
+                </CardBody>
+              </CardContainer>
+              <CardContainer containerClassName="h-full" className="h-full w-full">
+                <CardBody className="bg-card text-card-foreground rounded-xl border p-6 shadow-sm h-full flex flex-col min-h-[180px]">
+                  <CardItem translateZ={50} className="inline-flex items-center justify-center rounded-md bg-primary/10 text-primary p-2 w-fit mb-1">
                     <Eye className="size-4" />
-                  </div>
-                  <CardTitle className="text-base">Preview</CardTitle>
-                  <CardDescription>Live preview and iterate quickly.</CardDescription>
-                </CardHeader>
-              </Card>
-              <Card>
-                <CardHeader>
-                  <div className="inline-flex items-center justify-center rounded-md bg-primary/10 text-primary p-2 w-fit mb-1">
+                  </CardItem>
+                  <CardItem translateZ={50} as="div" className="text-base font-semibold mt-1">
+                    Preview
+                  </CardItem>
+                  <CardItem translateZ={50} as="p" className="text-muted-foreground">
+                    Live preview and iterate quickly.
+                  </CardItem>
+                </CardBody>
+              </CardContainer>
+              <CardContainer containerClassName="h-full" className="h-full w-full">
+                <CardBody className="bg-card text-card-foreground rounded-xl border p-6 shadow-sm h-full flex flex-col min-h-[180px]">
+                  <CardItem translateZ={50} className="inline-flex items-center justify-center rounded-md bg-primary/10 text-primary p-2 w-fit mb-1">
                     <UploadCloud className="size-4" />
-                  </div>
-                  <CardTitle className="text-base">Ship</CardTitle>
-                  <CardDescription>Deploy or download the code.</CardDescription>
-                </CardHeader>
-              </Card>
+                  </CardItem>
+                  <CardItem translateZ={50} as="div" className="text-base font-semibold mt-1">
+                    Ship
+                  </CardItem>
+                  <CardItem translateZ={50} as="p" className="text-muted-foreground">
+                    Deploy or download the code.
+                  </CardItem>
+                </CardBody>
+              </CardContainer>
             </div>
           </section>
 
