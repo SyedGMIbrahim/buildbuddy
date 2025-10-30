@@ -52,7 +52,7 @@ export const MessageForm = ({ projectId }: Props) => {
 
     const [isFocused, setIsFocused] = useState(false);
     const isPending = createMessage.isPending;
-    const isButtonDisabled = isPending || !form.formState.isValid;
+    const isButtonDisabled = isPending;
     const showUsage = false; // Placeholder for usage logic
 
     return (

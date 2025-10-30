@@ -165,7 +165,7 @@ export const FragmentView = ({ fragment }: Props) => {
                         sandbox="allow-scripts allow-same-origin allow-forms allow-modals allow-popups"
                     />
                 </TabsContent>
-                <TabsContent value="code" className="flex-1 m-0 flex">
+                <TabsContent value="code" className="flex-1 m-0 flex min-h-0">
                     {/* File Explorer */}
                     <div className="w-64 border-r flex flex-col min-h-0">
                         <div className="border-b px-3 py-2 text-sm font-medium bg-muted/50">
@@ -185,11 +185,11 @@ export const FragmentView = ({ fragment }: Props) => {
                         </ScrollArea>
                     </div>
                     {/* Code Viewer */}
-                    <div className="flex-1 flex flex-col min-h-0">
+                    <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
                         {selectedFile ? (
                             <>
                                 {/* Breadcrumbs */}
-                                <div className="border-b px-4 py-2 flex items-center gap-1 text-sm text-muted-foreground bg-muted/30">
+                                <div className="border-b px-4 py-2 flex items-center gap-1 text-sm text-muted-foreground bg-muted/30 flex-shrink-0">
                                     {breadcrumbs.map((crumb, index) => (
                                         <div key={index} className="flex items-center gap-1">
                                             {index > 0 && <span>/</span>}
@@ -200,11 +200,11 @@ export const FragmentView = ({ fragment }: Props) => {
                                     ))}
                                 </div>
                                 {/* Code Content */}
-                                <ScrollArea className="flex-1">
-                                    <pre className="p-4 text-sm">
+                                <div className="flex-1 overflow-auto">
+                                    <pre className="p-4 text-sm min-h-full">
                                         <code>{selectedFileContent}</code>
                                     </pre>
-                                </ScrollArea>
+                                </div>
                             </>
                         ) : (
                             <div className="flex items-center justify-center h-full text-muted-foreground">
