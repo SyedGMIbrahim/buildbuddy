@@ -66,3 +66,7 @@ model Fragment {
   title String
   files Json 
 }
+
+generator erd {
+  provider = "prisma-erd-generator"
+}

@@ -1,36 +1,81 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# BuildBuddy
+
+An AI-assisted project scaffolding platform (similar to Lovable) that lets you describe what you want to build and generates a working app skeleton with components, pages, and data plumbing. Create projects, chat about changes, preview results, and iterate fast.
+
+## Features
+- Create Project flow with smart suggestions and keyboard submit (⌘/Ctrl + Enter)
+- AI conversation thread per project (messages) with live updates
+- Typed, cache-friendly data fetching with tRPC + TanStack Query + SuperJSON hydration
+- Auth with Clerk and a compact, themed navbar
+- Modern, accessible UI components (Radix-based)
+
+## Tech Stack
+- Framework: Next.js 15 (App Router) + React 19 + TypeScript
+- Styling: Tailwind CSS v4, Radix UI primitives, custom UI kit
+- Data: Prisma ORM (+ PostgreSQL), Zod validation
+- API/Data Layer: tRPC v11, TanStack Query v5, SuperJSON
+- Auth: Clerk (Sign-in/Sign-up modals, UserButton)
+- Background/Agents: Inngest, @e2b/code-interpreter (optional integrations)
+- Utilities: date-fns, lucide-react icons, sonner toasts, react-hook-form
+
+## ER Diagram
+Below is the current data model overview:
+
+![ER Diagram](prisma/ERD.svg)
+
+## Project Structure
+- `src/app/` — App Router routes, layouts, API routes
+   - `/` home, `/projects/[projectId]`, `/api/trpc/[trpc]`, `/api/inngest`
+- `src/modules/` — Feature modules
+  - `projects/` UI + server procedures
+  - `messages/` UI + server procedures
+- `src/trpc/` — tRPC server, router, query client, hydration helpers
+- `src/components/` — Navbar, themed provider, UI components
+- `src/lib/` — Prisma client, utilities
+- `prisma/` — Prisma schema, migrations, ERD
 
 ## Getting Started
+1) Install dependencies
 
-First, run the development server:
+```bash
+npm ci
+```
+
+2) Configure environment variables in `.env`
+
+Required (examples):
+
+```bash
+# Database
+DATABASE_URL=postgresql://user:pass@localhost:5432/buildbuddy
+
+# Clerk
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_...
+CLERK_SECRET_KEY=sk_test_...
+```
+
+3) Apply Prisma migrations and generate client
+
+```bash
+npx prisma migrate dev
+npx prisma generate
+```
+
+4) Run the dev server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Scripts
+- `npm run dev` — Start Next.js dev server (Turbopack)
+- `npm run build` — Production build (includes typecheck + lint)
+- `npm start` — Start production server
+- `npm run lint` — Lint the codebase
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Notes
+- tRPC + TanStack Query hydration is wired via `src/trpc/server.tsx` and `getQueryClient()`.
+- Some integrations (Inngest, E2B) are optional; provide credentials only if you use them.
+- UI components are Radix-based and follow accessible patterns.
