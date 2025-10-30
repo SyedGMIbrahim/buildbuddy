@@ -1,5 +1,5 @@
 import { Sandbox } from "@e2b/code-interpreter"
-import { gemini, createAgent, createTool, createNetwork, type Tool, Agent } from "@inngest/agent-kit";
+import { gemini, createAgent, createTool, createNetwork, type Tool, Agent, openai } from "@inngest/agent-kit";
 import { inngest } from "./client";
 import { getSandbox, lastAssistantTextMessageContent } from "./utils";
 import z from "zod";
@@ -24,7 +24,7 @@ export const codeAgentFunction  = inngest.createFunction(
       name: "codeAgent",
       description: "An expert coding agent",
       system: PROMPT,
-      model: gemini({ model: "gemini-2.5-flash" }),
+      model: openai({ model: "gpt-5-mini" }),
       tools: [
         createTool({
           name: "terminal",
