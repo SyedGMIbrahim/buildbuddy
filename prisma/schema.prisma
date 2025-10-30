@@ -21,6 +21,16 @@ model Project {
   updatedAt DateTime @updatedAt
 
   messages Message[]
+  userId String?
+  user   User?    @relation(fields: [userId], references: [id])
+}
+
+model User {
+  id String @id
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  projects Project[]
 }
 
 enum MessageRole {

@@ -1,5 +1,4 @@
-import { createQueryClient } from "@/trpc/query-client";
-import { getTRPCClient } from "@/trpc/server";
+import { getQueryClient, trpc } from "@/trpc/server";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { ProjectView } from "./views/project-view";
 
@@ -8,8 +7,7 @@ interface Props {
 }
 
 export const ProjectViewWrapper = async ({ projectId }: Props) => {
-  const queryClient = createQueryClient();
-  const trpc = getTRPCClient();
+  const queryClient = getQueryClient();
 
   await queryClient.prefetchQuery(
     trpc.projects.getOne.queryOptions({ id: projectId })

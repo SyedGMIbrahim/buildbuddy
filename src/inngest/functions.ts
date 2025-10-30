@@ -160,7 +160,7 @@ export const codeAgentFunction  = inngest.createFunction(
         })
       }
 
-      return await prisma.message.create({
+      const createdAssistantMessage = await prisma.message.create({
         data: {
           projectId: event.data.projectId,
           content: result.state.data.summary,
@@ -174,7 +174,7 @@ export const codeAgentFunction  = inngest.createFunction(
             }
           }
         }
-      })
+      });
     })
 
     return { 
@@ -183,5 +183,14 @@ export const codeAgentFunction  = inngest.createFunction(
       files: result.state.data.files,
       summary: result.state.data.summary
     };
+  },
+);
+
+export const messageUpdated = inngest.createFunction(
+  { id: "message-updated" },
+  { event: "message/updated" },
+  async () => {
+    // This function doesn't need to do anything on the backend.
+    // Its purpose is to trigger a frontend re-fetch.
   },
 );

@@ -4,12 +4,13 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build --turbopack",
+    "build": "next build",
     "start": "next start",
     "lint": "eslint",
     "seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
+    "@clerk/nextjs": "^6.34.1",
     "@e2b/code-interpreter": "^2.1.0",
     "@hookform/resolvers": "^5.2.1",
     "@inngest/agent-kit": "^0.13.1",

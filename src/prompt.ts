@@ -7,17 +7,20 @@ Environment:
 - Read files via readFiles
 - Do not modify package.json or lock files directly — install packages using the terminal only
 - Main file: app/page.tsx
-- All Shadcn components are pre-installed and imported from "@/components/ui/*"
-- Tailwind CSS and PostCSS are preconfigured
-- layout.tsx is already defined and wraps all routes — do not include <html>, <body>, or top-level layout
-- You MUST NOT create or modify any .css, .scss, or .sass files — styling must be done strictly using Tailwind CSS classes
-- Important: The @ symbol is an alias used only for imports (e.g. "@/components/ui/button")
-- When using readFiles or accessing the file system, you MUST use the actual path (e.g. "/home/user/components/ui/button.tsx")
-- You are already inside /home/user.
-- All CREATE OR UPDATE file paths must be relative (e.g., "app/page.tsx", "lib/utils.ts").
-- NEVER use absolute paths like "/home/user/..." or "/home/user/app/...".
-- NEVER include "/home/user" in any file path — this will cause critical errors.
-- Never use "@" inside readFiles or other file system operations — it will fail
+  - All Shadcn components are pre-installed and imported from "@/components/ui/*"
+  - Available Shadcn UI components are: accordion, alert-dialog, alert, aspect-ratio, avatar, badge, breadcrumb, button, calendar, card, carousel, chart, checkbox, collapsible, command, context-menu, dialog, drawer, dropdown-menu, form, hover-card, input-otp, input, label, menubar, navigation-menu, pagination, popover, progress, radio-group, resizable, scroll-area, select, separator, sheet, sidebar, skeleton, slider, sonner, switch, table, tabs, textarea, toggle-group, toggle, tooltip.
+  - You MUST ONLY use the components listed above. If you need a navigation bar, use the "navigation-menu" component from the available list.
+  - You MUST NEVER attempt to read files from "@/components/ui/*" that are not explicitly in the list above.
+  - Tailwind CSS and PostCSS are preconfigured
+  - layout.tsx is already defined and wraps all routes — do not include <html>, <body>, or top-level layout
+  - You MUST NOT create or modify any .css, .scss, or .sass files — styling must be done strictly using Tailwind CSS classes
+  - Important: The @ symbol is an alias used only for imports (e.g. "@/components/ui/button")
+  - When using readFiles or accessing the file system, you MUST use the actual path (e.g. "/home/user/app/page.tsx")
+  - You are already inside /home/user.
+  - All CREATE OR UPDATE file paths must be relative (e.g., "app/page.tsx", "lib/utils.ts").
+  - NEVER use absolute paths like "/home/user/..." or "/home/user/app/...".
+  - NEVER include "/home/user" in any file path — this will cause critical errors.
+  - Never use "@" inside readFiles or other file system operations — it will fail
 
 File Safety Rules:
 - ALWAYS add "use client" to the TOP, THE FIRST LINE of app/page.tsx and any other relevant files which use browser APIs or react hooks
@@ -48,7 +51,6 @@ Shadcn UI dependencies — including radix-ui, lucide-react, class-variance-auth
    - Always import Shadcn components correctly from the "@/components/ui" directory. For instance:
      import { Button } from "@/components/ui/button";
      Then use: <Button variant="outline">Label</Button>
-  - You may import Shadcn components using the "@" alias, but when reading their files using readFiles, always convert "@/components/..." into "/home/user/components/..."
   - Do NOT import "cn" from "@/components/ui/utils" — that path does not exist.
   - The "cn" utility MUST always be imported from "@/lib/utils"
   Example: import { cn } from "@/lib/utils"
@@ -111,4 +113,5 @@ Created a blog layout with a responsive sidebar, a dynamic list of articles, and
 - Ending without printing <task_summary>
 
 This is the ONLY valid way to terminate your task. If you omit or alter this section, the task will be considered incomplete and will continue unnecessarily.
+
 `;

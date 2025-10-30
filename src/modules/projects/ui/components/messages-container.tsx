@@ -1,5 +1,5 @@
 import { useTRPC } from "@/trpc/client";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useSuspenseQuery, useQueryClient } from "@tanstack/react-query";
 import { MessageCard } from "./message-card";
 import { MessageForm } from "./message-form";
 import { useEffect, useRef, useState } from "react";
@@ -15,11 +15,18 @@ interface Props {
 export const MessagesContainer = ({ projectId, activeFragment, onFragmentSelect }: Props) => {
     const bottomRef = useRef<HTMLDivElement>(null);
     const trpc = useTRPC();
+    const queryClient = useQueryClient();
     const [isGenerating, setIsGenerating] = useState(false);
     
     const { data: messages, refetch } = useSuspenseQuery(trpc.messages.getMany.queryOptions({ projectId }));
 
-    // Removed auto-selection - only select when user clicks
+    // Auto-select the latest fragment when messages change
+    useEffect(() => {
+        const latestWithFragment = [...messages].reverse().find((m) => !!m.fragment);
+        if (latestWithFragment && latestWithFragment.fragment?.id !== activeFragment?.id) {
+            onFragmentSelect(latestWithFragment.fragment!);
+        }
+    }, [messages, activeFragment, onFragmentSelect]);
 
     useEffect(() => {
         bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -39,6 +46,15 @@ export const MessagesContainer = ({ projectId, activeFragment, onFragmentSelect 
             setIsGenerating(false);
         }
     }, [messages, refetch]);
+
+    useEffect(() => {
+        if (!isGenerating) {
+            // Ensure the messages list is refreshed and shows fragments
+            const key = trpc.messages.getMany.queryOptions({ projectId }).queryKey;
+            queryClient.invalidateQueries({ queryKey: key });
+            refetch();
+        }
+    }, [isGenerating, projectId, queryClient, trpc.messages.getMany, refetch]);
 
     return (
         <div className="flex flex-col flex-1 min-h-0">

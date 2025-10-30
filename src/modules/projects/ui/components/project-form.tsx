@@ -26,6 +26,10 @@ const suggestions = [
     "Create a blog platform",
     "Build a real-time chat app",
     "Create an e-commerce store",
+    "Develop a personal finance tracker",
+    "Build a recipe sharing app",
+    "Create a fitness tracker",
+    "Develop a project management tool",
 ];
 
 export const ProjectForm = () => {
@@ -68,8 +72,8 @@ export const ProjectForm = () => {
 
     return (
         <Card className="p-6">
-            <div className="mb-4">
-                <h2 className="text-2xl font-bold flex items-center gap-2">
+            <div className="mb-4 text-center">
+                <h2 className="text-2xl font-bold flex items-center justify-center gap-2">
                     <SparklesIcon className="size-6 text-primary" />
                     Create New Project
                 </h2>
@@ -87,9 +91,9 @@ export const ProjectForm = () => {
                                 <TextareaAutosize
                                     {...field}
                                     disabled={isPending}
-                                    minRows={4}
+                                    minRows={2}
                                     maxRows={10}
-                                    className="w-full resize-none border rounded-lg p-3 outline-none focus:ring-2 focus:ring-primary"
+                                    className="w-full resize-none rounded-lg p-3 outline-none border-2 border-primary focus:border-gray-300 transition-colors disabled:opacity-50 bg-background text-foreground placeholder:text-muted-foreground"
                                     placeholder="E.g., Create a todo list app with dark mode support..."
                                     onKeyDown={(e) => {
                                         if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
@@ -127,15 +131,15 @@ export const ProjectForm = () => {
 
                     {/* Suggestions */}
                     <div className="pt-1">
-                        <p className="text-xs text-muted-foreground mb-2">Try one of these</p>
-                        <div className="flex flex-wrap gap-2">
+                        <p className="text-xs text-muted-foreground mb-2 text-center">Try one of these</p>
+                        <div className="flex flex-wrap justify-center gap-2">
                             {suggestions.map((text) => (
                                 <Button
                                     key={text}
                                     type="button"
                                     variant="outline"
                                     size="sm"
-                                    className="rounded-full"
+                                    className="rounded-full transition-colors hover:bg-primary/10 hover:border-primary hover:text-primary hover:shadow-md "
                                     disabled={isPending}
                                     onClick={() => onSuggestion(text)}
                                 >

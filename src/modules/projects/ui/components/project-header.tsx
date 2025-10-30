@@ -22,7 +22,9 @@ interface Props {
 
 export const ProjectHeader = ({ projectId }: Props) => {
     const trpc = useTRPC();
-    const { data: project } = useSuspenseQuery(trpc.projects.getOne.queryOptions({ id: projectId }));
+    const { data: project } = useSuspenseQuery({
+        ...trpc.projects.getOne.queryOptions({ id: projectId! })
+    });
     const { theme, setTheme } = useTheme();
 
     return (
@@ -36,7 +38,7 @@ export const ProjectHeader = ({ projectId }: Props) => {
                             width={24}
                             height={24}
                         />
-                        <h1 className="text-lg font-semibold">{project.name}</h1>
+                        <h1 className="text-lg font-semibold">{projectId ? project?.name : "BuildBuddy"}</h1>
                         <ChevronDownIcon className="size-4 text-muted-foreground" />
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="start">

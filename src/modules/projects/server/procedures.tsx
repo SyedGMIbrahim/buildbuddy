@@ -1,6 +1,6 @@
 import { inngest } from "@/inngest/client";
 import { prisma } from "@/lib/db";
-import { baseProcedure, createTRPCRouter } from "@/trpc/init";
+import { baseProcedure, createTRPCRouter, protectedProcedure } from "@/trpc/init";
 import { TRPCError } from "@trpc/server";
 import { generateSlug } from "random-word-slugs";
 import z from "zod";
@@ -38,7 +38,7 @@ export const projectsRouter = createTRPCRouter({
 
             return projects;
         }),
-    create: baseProcedure
+    create: protectedProcedure
         .input(
             z.object({
                 value : z.string()
@@ -46,12 +46,20 @@ export const projectsRouter = createTRPCRouter({
                     .max(10000, { message: "Value is too long" }),
             })
         )
-        .mutation(async ({ input }) => {
+        .mutation(async ({ input, ctx }) => {
+            // First, ensure the user exists in our database
+            await prisma.user.upsert({
+                where: { id: ctx.userId! },
+                update: {}, // No updates needed if exists
+                create: { id: ctx.userId! } // Create if doesn't exist
+            });
+            
             const createdProject = await prisma.project.create({
                 data: {
                     name: generateSlug(2, {
                         format: "kebab",
                     }),
+                    userId: ctx.userId!,
                     messages: {
                         create: {
                             content: input.value,
@@ -72,4 +80,4 @@ export const projectsRouter = createTRPCRouter({
 
             return createdProject;
         }),
-})
+});

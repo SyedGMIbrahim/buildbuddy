@@ -1,9 +1,11 @@
-import { Form, useForm } from "react-hook-form";
+"use client";
+
+import { useForm } from "react-hook-form";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
-import { FormField } from "@/components/ui/form";
+import { Form, FormField } from "@/components/ui/form";
 import TextareaAutosize from "react-textarea-autosize";
 import { Button } from "@/components/ui/button";
 import { ArrowUpIcon, Loader2Icon } from "lucide-react";

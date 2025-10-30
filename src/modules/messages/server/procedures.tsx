@@ -1,6 +1,6 @@
 import { inngest } from "@/inngest/client";
 import { prisma } from "@/lib/db";
-import { baseProcedure, createTRPCRouter } from "@/trpc/init";
+import { baseProcedure, createTRPCRouter, protectedProcedure } from "@/trpc/init";
 import z from "zod";
 
 export const messagesRouter = createTRPCRouter({
@@ -25,7 +25,7 @@ export const messagesRouter = createTRPCRouter({
 
             return messages;
         }),
-    create: baseProcedure
+    create: protectedProcedure
         .input(
             z.object({
                 value: z.string()
@@ -54,4 +54,4 @@ export const messagesRouter = createTRPCRouter({
 
             return createdMessage;
         }),
-})
+});
