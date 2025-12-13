@@ -1,81 +1,461 @@
-# BuildBuddy
+# BuildBuddy 🚀
 
-An AI-assisted project scaffolding platform (similar to Lovable) that lets you describe what you want to build and generates a working app skeleton with components, pages, and data plumbing. Create projects, chat about changes, preview results, and iterate fast.
+<div align="center">
+  <img src="public/logo.svg" alt="BuildBuddy Logo" width="120" />
+  <p><strong>Your AI-Powered Project Scaffolding Companion</strong></p>
+</div>
 
-## Features
-- Create Project flow with smart suggestions and keyboard submit (⌘/Ctrl + Enter)
-- AI conversation thread per project (messages) with live updates
-- Typed, cache-friendly data fetching with tRPC + TanStack Query + SuperJSON hydration
-- Auth with Clerk and a compact, themed navbar
-- Modern, accessible UI components (Radix-based)
+## 📖 Overview
 
-## Tech Stack
-- Framework: Next.js 15 (App Router) + React 19 + TypeScript
-- Styling: Tailwind CSS v4, Radix UI primitives, custom UI kit
-- Data: Prisma ORM (+ PostgreSQL), Zod validation
-- API/Data Layer: tRPC v11, TanStack Query v5, SuperJSON
-- Auth: Clerk (Sign-in/Sign-up modals, UserButton)
-- Background/Agents: Inngest, @e2b/code-interpreter (optional integrations)
-- Utilities: date-fns, lucide-react icons, sonner toasts, react-hook-form
+BuildBuddy is an innovative AI-assisted project scaffolding platform that transforms your ideas into working applications. Simply describe what you want to build in natural language, and BuildBuddy's AI will generate a complete project structure with components, pages, database schemas, and functional code—all ready to preview and iterate on.
 
-## ER Diagram
-Below is the current data model overview:
+Think of it as having an expert developer pair-programmer who can scaffold entire projects, generate UI components, set up data flows, and create interactive prototypes in seconds, not hours.
+
+### 🎯 Key Capabilities
+
+- **Natural Language Project Creation**: Describe your app idea in plain English, and watch as BuildBuddy generates the complete project structure
+- **Interactive AI Conversations**: Chat with AI about your project, request changes, add features, or refine existing components through a conversational interface
+- **Live Preview & Iteration**: Instantly preview generated code in isolated sandboxes with full hot-reload support
+- **Smart Code Generation**: AI generates production-ready React components, pages, and data models with best practices baked in
+- **File Explorer & Code Viewer**: Browse through generated files, view code, and understand the structure of your project
+- **Multi-Project Management**: Create and manage multiple projects, each with its own AI conversation thread and generated artifacts
+
+## ✨ Features
+
+### 🤖 AI-Powered Generation
+- **Intelligent Scaffolding**: AI analyzes your description and generates appropriate components, layouts, and data structures
+- **Context-Aware Suggestions**: Smart project suggestions to help you get started quickly
+- **Conversational Refinement**: Iterate on generated code through natural conversation—no manual coding required
+- **Error Handling**: AI provides helpful error messages and recovery suggestions when things go wrong
+
+### 💬 Project Conversation System
+- **Threaded Conversations**: Each project maintains its own conversation history with the AI
+- **Live Updates**: Real-time polling ensures you see AI responses as they're generated
+- **Fragment Management**: Each AI response can include code fragments (preview + files)
+- **Message Types**: Differentiated message types (RESULT, ERROR) for better UX
+
+### 🎨 Modern UI/UX
+- **Beautiful, Accessible Components**: Built on Radix UI primitives with full keyboard navigation and ARIA support
+- **Dark/Light/System Themes**: Seamless theme switching with system preference detection
+- **Responsive Design**: Fully optimized for desktop, tablet, and mobile experiences
+- **3D Card Effects**: Eye-catching 3D transformations on interactive elements
+- **Toast Notifications**: Non-intrusive feedback with Sonner toast system
+
+### 🔐 Authentication & User Management
+- **Clerk Integration**: Production-ready authentication with email, social, and passwordless options
+- **User-Specific Projects**: Each user's projects are isolated and secure
+- **Modal Sign-in/Sign-up**: Frictionless authentication flow without page redirects
+
+### 🛠 Developer Experience
+- **Type-Safe Everything**: Full TypeScript coverage with end-to-end type safety
+- **tRPC API**: Type-safe API calls with automatic TypeScript inference
+- **Hot Reload**: Instant feedback during development with Next.js Turbopack
+- **Form Validation**: Zod schemas ensure data integrity at every layer
+- **React Hook Form**: Performant forms with minimal re-renders
+
+## 🏗 Tech Stack
+
+BuildBuddy is built with modern, production-ready technologies chosen for performance, developer experience, and scalability.
+
+### Frontend
+- **[Next.js 15](https://nextjs.org/)** - React framework with App Router, Server Components, and streaming SSR
+- **[React 19](https://react.dev/)** - Latest React with enhanced concurrent features
+- **[TypeScript](https://www.typescriptlang.org/)** - Full type safety across the entire application
+- **[Tailwind CSS v4](https://tailwindcss.com/)** - Utility-first CSS with custom design tokens
+- **[Radix UI](https://www.radix-ui.com/)** - Unstyled, accessible component primitives
+- **[Lucide React](https://lucide.dev/)** - Beautiful, consistent icon library
+
+### Data & API Layer
+- **[tRPC v11](https://trpc.io/)** - End-to-end type-safe APIs without code generation
+- **[TanStack Query v5](https://tanstack.com/query)** - Powerful data synchronization with caching and optimistic updates
+- **[Prisma ORM](https://www.prisma.io/)** - Type-safe database client with migration system
+- **[PostgreSQL](https://www.postgresql.org/)** - Robust, production-grade relational database
+- **[Zod](https://zod.dev/)** - TypeScript-first schema validation
+- **[SuperJSON](https://github.com/blitz-js/superjson)** - Enhanced JSON serialization for complex data types
+
+### Authentication & Background Jobs
+- **[Clerk](https://clerk.com/)** - Complete user management with pre-built UI components
+- **[Inngest](https://www.inngest.com/)** - Durable workflow engine for background jobs and AI agents
+- **[E2B Code Interpreter](https://e2b.dev/)** - Secure sandboxed code execution environment
+
+### Development Tools
+- **[React Hook Form](https://react-hook-form.com/)** - Performant, flexible form library
+- **[date-fns](https://date-fns.org/)** - Modern date utility library
+- **[Sonner](https://sonner.emilkowal.ski/)** - Beautiful toast notifications
+- **[class-variance-authority](https://cva.style/)** - Type-safe component variants
+- **[clsx](https://github.com/lukeed/clsx) / [tailwind-merge](https://github.com/dcastil/tailwind-merge)** - Conditional class name utilities
+
+## 📊 Database Schema
+
+BuildBuddy uses a clean, normalized database schema optimized for AI-assisted project generation:
+
+### Models
+
+#### **User**
+Represents authenticated users in the system.
+- `id` (String, PK) - Clerk user ID
+- `createdAt`, `updatedAt` - Timestamp tracking
+- **Relations**: Has many `Projects`
+
+#### **Project**
+Represents a user's project with its AI conversation.
+- `id` (UUID, PK) - Unique project identifier
+- `name` (String) - Project name (AI-generated or user-provided)
+- `userId` (String, FK) - Owner of the project
+- `createdAt`, `updatedAt` - Timestamp tracking
+- **Relations**: Has many `Messages`, belongs to `User`
+
+#### **Message**
+Represents a message in the AI conversation thread.
+- `id` (UUID, PK) - Unique message identifier
+- `content` (String) - Message text content
+- `role` (Enum: USER | ASSISTANT) - Who sent the message
+- `type` (Enum: RESULT | ERROR) - Message classification
+- `projectId` (String, FK) - Associated project
+- `createdAt`, `updatedAt` - Timestamp tracking
+- **Relations**: Belongs to `Project`, has one optional `Fragment`
+
+#### **Fragment**
+Represents generated code artifacts with preview capability.
+- `id` (UUID, PK) - Unique fragment identifier
+- `messageId` (String, FK, Unique) - Associated message
+- `sandboxUrl` (String) - E2B sandbox preview URL
+- `title` (String) - Fragment/component name
+- `files` (JSON) - Generated file structure and contents
+- **Relations**: Belongs to `Message`
+
+### Entity Relationship Diagram
 
 ![ER Diagram](prisma/ERD.svg)
 
-## Project Structure
-- `src/app/` — App Router routes, layouts, API routes
-   - `/` home, `/projects/[projectId]`, `/api/trpc/[trpc]`, `/api/inngest`
-- `src/modules/` — Feature modules
-  - `projects/` UI + server procedures
-  - `messages/` UI + server procedures
-- `src/trpc/` — tRPC server, router, query client, hydration helpers
-- `src/components/` — Navbar, themed provider, UI components
-- `src/lib/` — Prisma client, utilities
-- `prisma/` — Prisma schema, migrations, ERD
+**Relationships:**
+- User `1:N` Project - A user can have multiple projects
+- Project `1:N` Message - Each project has a conversation thread
+- Message `1:1` Fragment - Some messages include generated code fragments
 
-## Getting Started
-1) Install dependencies
+## 📁 Project Structure
+
+BuildBuddy follows a modular, feature-based architecture for maximum maintainability and scalability.
+
+```
+buildbuddy/
+├── prisma/
+│   ├── schema.prisma          # Database schema and models
+│   ├── migrations/            # Database migration history
+│   └── ERD.svg               # Entity relationship diagram
+│
+├── public/
+│   └── logo.svg              # Application logo and static assets
+│
+├── sandbox-templates/
+│   └── nextjs/               # E2B sandbox templates for code execution
+│       ├── e2b.Dockerfile
+│       ├── e2b.toml
+│       ├── template.ts
+│       └── compile scripts
+│
+├── src/
+│   ├── app/                  # Next.js App Router
+│   │   ├── layout.tsx        # Root layout with providers
+│   │   ├── page.tsx          # Homepage (project creation & list)
+│   │   ├── globals.css       # Global styles and CSS variables
+│   │   ├── api/
+│   │   │   ├── trpc/         # tRPC HTTP handler
+│   │   │   └── inngest/      # Inngest webhook endpoint
+│   │   ├── projects/
+│   │   │   └── [projectId]/  # Dynamic project view route
+│   │   ├── sign-in/          # Clerk sign-in page
+│   │   └── sign-up/          # Clerk sign-up page
+│   │
+│   ├── modules/              # Feature modules (domain-driven design)
+│   │   ├── projects/
+│   │   │   ├── domain/       # Business logic
+│   │   │   ├── server/       # tRPC routers & procedures
+│   │   │   └── ui/           # React components & views
+│   │   │       ├── components/
+│   │   │       │   ├── project-form.tsx
+│   │   │       │   ├── project-list.tsx
+│   │   │       │   ├── project-header.tsx
+│   │   │       │   ├── fragment-view.tsx
+│   │   │       │   └── messages-container.tsx
+│   │   │       └── views/
+│   │   │           └── project-view.tsx
+│   │   │
+│   │   └── messages/
+│   │       ├── domain/       # Message business logic
+│   │       ├── server/       # Message tRPC router
+│   │       └── ui/           # Message components
+│   │           └── components/
+│   │               ├── message-card.tsx
+│   │               └── message-form.tsx
+│   │
+│   ├── components/           # Shared UI components
+│   │   ├── navbar.tsx
+│   │   ├── theme-provider.tsx
+│   │   ├── user-control.tsx
+│   │   └── ui/              # Radix UI component wrappers
+│   │       ├── button.tsx
+│   │       ├── card.tsx
+│   │       ├── dialog.tsx
+│   │       ├── form.tsx
+│   │       ├── tabs.tsx
+│   │       └── ... (40+ components)
+│   │
+│   ├── trpc/                # tRPC configuration
+│   │   ├── init.ts          # tRPC instance initialization
+│   │   ├── server.tsx       # Server-side helpers
+│   │   ├── client.tsx       # Client-side provider
+│   │   ├── query-client.ts  # TanStack Query configuration
+│   │   └── routers/         # Combined router exports
+│   │
+│   ├── inngest/             # Background jobs
+│   │   ├── client.ts        # Inngest client setup
+│   │   ├── functions.ts     # Job definitions
+│   │   └── utils.ts         # Helper utilities
+│   │
+│   ├── lib/                 # Shared utilities
+│   │   ├── db.ts           # Prisma client singleton
+│   │   └── utils.ts        # Helper functions
+│   │
+│   ├── hooks/              # Custom React hooks
+│   │   └── use-mobile.ts
+│   │
+│   ├── generated/          # Generated code
+│   │   └── prisma/         # Prisma client
+│   │
+│   ├── middleware.ts       # Next.js middleware (Clerk auth)
+│   └── prompt.ts          # AI system prompts
+│
+├── components.json         # shadcn/ui configuration
+├── tsconfig.json          # TypeScript configuration
+├── next.config.ts         # Next.js configuration
+├── tailwind.config.js     # Tailwind CSS configuration
+├── eslint.config.mjs      # ESLint configuration
+└── package.json           # Dependencies and scripts
+```
+
+### Architecture Principles
+
+1. **Modular Design**: Features are organized into self-contained modules with domain logic, server procedures, and UI components
+2. **Type Safety**: End-to-end TypeScript with tRPC ensures runtime type safety from database to UI
+3. **Server Components**: Leverages React Server Components for optimal performance and SEO
+4. **API Routes**: tRPC procedures are organized by feature domain (projects, messages)
+5. **Reusable Components**: Shared UI components built on Radix primitives for consistency
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- **Node.js** 18.17 or later
+- **PostgreSQL** 14 or later (or a hosted provider like Supabase, Neon, PlanetScale)
+- **pnpm/npm/yarn** - Package manager
+- **Clerk Account** - For authentication ([sign up free](https://clerk.com))
+- **Inngest Account** - For background jobs ([sign up free](https://inngest.com))
+- **E2B Account** (Optional) - For code sandbox execution ([sign up free](https://e2b.dev))
+
+### Installation
+
+1. **Clone the repository**
+
+```bash
+git clone https://github.com/SyedGMIbrahim/buildbuddy.git
+cd buildbuddy
+```
+
+2. **Install dependencies**
 
 ```bash
 npm ci
+# or
+pnpm install
+# or
+yarn install
 ```
 
-2) Configure environment variables in `.env`
+3. **Set up environment variables**
 
-Required (examples):
+Create a `.env` file in the root directory:
 
 ```bash
-# Database
-DATABASE_URL=postgresql://user:pass@localhost:5432/buildbuddy
+# Database - PostgreSQL connection string
+DATABASE_URL="postgresql://user:password@localhost:5432/buildbuddy?schema=public"
 
-# Clerk
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_...
-CLERK_SECRET_KEY=sk_test_...
+# Clerk Authentication
+# Get these from https://dashboard.clerk.com
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY="pk_test_..."
+CLERK_SECRET_KEY="sk_test_..."
+
+# Optional: Custom sign-in/sign-up URLs
+NEXT_PUBLIC_CLERK_SIGN_IN_URL="/sign-in"
+NEXT_PUBLIC_CLERK_SIGN_UP_URL="/sign-up"
+
+# Inngest - Background Jobs
+# Get these from https://app.inngest.com
+INNGEST_EVENT_KEY="your-event-key"
+INNGEST_SIGNING_KEY="your-signing-key"
+
+# Optional: E2B Code Interpreter
+# Get this from https://e2b.dev/docs
+E2B_API_KEY="your-e2b-api-key"
+
+# Optional: OpenAI or other AI provider
+OPENAI_API_KEY="your-openai-key"
 ```
 
-3) Apply Prisma migrations and generate client
+4. **Set up the database**
 
 ```bash
+# Run Prisma migrations to create tables
 npx prisma migrate dev
+
+# Generate Prisma client
 npx prisma generate
+
+# Optional: Seed the database with sample data
+npm run seed
 ```
 
-4) Run the dev server
+5. **Start the Inngest dev server** (in a separate terminal)
+
+```bash
+npx inngest-cli@latest dev
+```
+
+This starts the Inngest development server at `http://localhost:8288` for background job processing.
+
+6. **Start the development server**
 
 ```bash
 npm run dev
 ```
 
-Open http://localhost:3000.
+Open [http://localhost:3000](http://localhost:3000) in your browser to see the application.
 
-## Scripts
-- `npm run dev` — Start Next.js dev server (Turbopack)
-- `npm run build` — Production build (includes typecheck + lint)
-- `npm start` — Start production server
-- `npm run lint` — Lint the codebase
+### 🎉 You're ready to build!
 
-## Notes
-- tRPC + TanStack Query hydration is wired via `src/trpc/server.tsx` and `getQueryClient()`.
-- Some integrations (Inngest, E2B) are optional; provide credentials only if you use them.
-- UI components are Radix-based and follow accessible patterns.
+1. Sign up or sign in with Clerk
+2. Describe your project idea (e.g., "Create a todo app with dark mode")
+3. Watch as BuildBuddy generates your project
+4. Preview the generated code in the browser
+5. Chat with AI to refine and iterate
+
+## 📜 Available Scripts
+
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start Next.js development server with Turbopack |
+| `npm run build` | Create production build (includes type-check & lint) |
+| `npm start` | Start production server (run `build` first) |
+| `npm run lint` | Lint codebase with ESLint |
+| `npm run seed` | Seed database with sample data |
+| `npx prisma studio` | Open Prisma Studio (database GUI) |
+| `npx prisma migrate dev` | Create and apply database migration |
+| `npx prisma generate` | Regenerate Prisma client after schema changes |
+
+## 🏗️ How It Works
+
+### 1. Project Creation Flow
+When a user creates a new project:
+- User describes their idea in natural language
+- The description is sent to the AI via tRPC mutation
+- Inngest triggers a background job to process the request
+- AI generates project structure, components, and code
+- Results are streamed back and stored in the database
+- User is redirected to the project view
+
+### 2. AI Conversation System
+Each project has its own conversation thread:
+- Messages are stored with role (USER/ASSISTANT) and type (RESULT/ERROR)
+- Real-time polling keeps the UI synchronized with AI responses
+- Fragments (code artifacts) are linked to assistant messages
+- Each fragment includes a sandbox URL for live preview
+
+### 3. Code Generation & Preview
+Generated code is executed in secure E2B sandboxes:
+- Files are uploaded to E2B sandbox environment
+- Sandbox compiles and runs the Next.js application
+- Preview URL is generated and stored with the fragment
+- Users can interact with the live application
+
+### 4. Type-Safe Data Flow
+```
+User Input → Zod Validation → tRPC Mutation → Prisma Query → PostgreSQL
+     ↓
+PostgreSQL → Prisma Client → tRPC Query → TanStack Query → React Component
+```
+
+## 🔒 Security & Best Practices
+
+- **Authentication**: Clerk handles all auth flows with secure session management
+- **API Security**: tRPC procedures validate inputs with Zod schemas
+- **Database**: Prisma prevents SQL injection with parameterized queries
+- **Sandboxing**: Code execution is isolated in E2B containers
+- **Environment Variables**: Sensitive keys are never exposed to the client
+- **Type Safety**: TypeScript catches errors at compile time
+
+## 🎨 Theming & Customization
+
+BuildBuddy supports custom themes with CSS variables:
+
+- Edit `src/app/globals.css` to modify color schemes
+- Supports light, dark, and system preference modes
+- Theme switching is handled by `ThemeProvider`
+- All components respect the current theme
+
+## 📝 Key Technical Decisions
+
+### Why tRPC?
+- End-to-end type safety without code generation
+- Automatic TypeScript inference
+- Excellent DX with autocomplete and type checking
+- Seamless integration with TanStack Query
+
+### Why Prisma?
+- Type-safe database queries
+- Automatic migrations
+- Excellent TypeScript support
+- Great developer experience with Prisma Studio
+
+### Why Next.js App Router?
+- React Server Components for better performance
+- Streaming SSR for faster page loads
+- Built-in API routes
+- File-based routing
+
+### Why Clerk?
+- Production-ready authentication
+- Beautiful pre-built UI components
+- Easy social login integration
+- Excellent documentation
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- Inspired by [Lovable](https://lovable.dev/) and similar AI-assisted development tools
+- Built with amazing open-source technologies
+- Thanks to the Next.js, React, and TypeScript communities
+
+## 📧 Contact
+
+**Syed GM Ibrahim** - [@SyedGMIbrahim](https://github.com/SyedGMIbrahim)
+
+Project Link: [https://github.com/SyedGMIbrahim/buildbuddy](https://github.com/SyedGMIbrahim/buildbuddy)
+
+---
+
+<div align="center">
+  <strong>Built with ❤️ using Next.js, React, and TypeScript</strong>
+</div>
