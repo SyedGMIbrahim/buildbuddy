@@ -24,7 +24,7 @@ export const codeAgentFunction  = inngest.createFunction(
       name: "codeAgent",
       description: "An expert coding agent",
       system: PROMPT,
-      model: openai({ model: "gpt-5-mini" }),
+      model: openai({ model: "gpt-5.2" }),
       tools: [
         createTool({
           name: "terminal",
