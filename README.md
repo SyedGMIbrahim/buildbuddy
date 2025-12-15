@@ -34,12 +34,13 @@ Think of it as having an expert developer pair-programmer who can scaffold entir
 - **Fragment Management**: Each AI response can include code fragments (preview + files)
 - **Message Types**: Differentiated message types (RESULT, ERROR) for better UX
 
-### 💳 Billing & Rate Limiting
+### 💳 Billing & Rate Limiting ⚠️ BETA
 - **Credit-Based System**: Fair usage tracking with credit consumption per action
 - **Flexible Plans**: Free tier (50 credits) and Pro tier (100 credits) via Clerk subscriptions
 - **Usage Dashboard**: Real-time credit usage display with progress bars and warnings
 - **Transparent Pricing**: Clear credit costs (10 credits per project, 5 credits per message)
 - **Seamless Upgrades**: One-click upgrade flow with Clerk's PricingTable component
+- **Note**: Billing integration is in beta. Manual metadata configuration required in Clerk dashboard.
 
 ### 🎨 Modern UI/UX
 - **Beautiful, Accessible Components**: Built on Radix UI primitives with full keyboard navigation and ARIA support
@@ -361,9 +362,12 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) in your browser to see the application.
 
-7. **Set up Clerk webhook for subscription sync** (Optional but recommended for billing)
+7. **Configure billing** (Optional - Beta Feature)
 
-Follow the instructions in [WEBHOOK_SETUP.md](WEBHOOK_SETUP.md) to configure Clerk webhooks for automatic credit synchronization when users upgrade/downgrade their subscription.
+To enable the billing/credit system:
+- Set user metadata in Clerk Dashboard: `{ "subscription_plan": "pro" }` or `"free"`
+- Or call `/api/update-subscription` endpoint after subscribing
+- Note: Full automation requires Stripe webhook configuration
 
 ### 🎉 You're ready to build!
 

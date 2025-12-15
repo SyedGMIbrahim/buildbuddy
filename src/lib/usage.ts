@@ -1,13 +1,11 @@
 import { prisma } from "@/lib/db";
 import { auth, clerkClient } from "@clerk/nextjs/server";
 
-// Credit costs for different operations
 export const CREDIT_COSTS = {
   CREATE_PROJECT: 10,
   SEND_MESSAGE: 5,
 } as const;
 
-// Plan limits based on Clerk subscriptions
 export const PLAN_LIMITS = {
   free: 50,
   pro: 100,
@@ -20,11 +18,18 @@ async function getUserPlan(userId: string): Promise<keyof typeof PLAN_LIMITS> {
   try {
     const client = await clerkClient();
     const user = await client.users.getUser(userId);
+    
     const publicMetadata = user.publicMetadata || {};
     const subscriptionPlan = publicMetadata.subscription_plan as string;
 
-    // Check if user has "pro" subscription
     if (subscriptionPlan === "pro") {
+      return "pro";
+    }
+    
+    const privateMetadata = user.privateMetadata || {};
+    const privateSubscriptionPlan = privateMetadata.subscription_plan as string;
+    
+    if (privateSubscriptionPlan === "pro") {
       return "pro";
     }
     
@@ -55,7 +60,6 @@ export async function getCurrentUsage(userId: string) {
     },
   });
 
-  // Create new usage record if none exists for current period
   if (!usage) {
     const userPlan = await getUserPlan(userId);
     usage = await prisma.usage.create({
@@ -68,7 +72,6 @@ export async function getCurrentUsage(userId: string) {
       },
     });
   } else {
-    // Sync credit limit with current subscription plan
     const userPlan = await getUserPlan(userId);
     const expectedLimit = PLAN_LIMITS[userPlan];
     

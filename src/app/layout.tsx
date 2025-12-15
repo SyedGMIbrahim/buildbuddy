@@ -5,7 +5,7 @@ import { TRPCReactProvider } from "@/trpc/client";
 import { Toaster } from "sonner";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ClerkProvider } from "@clerk/nextjs";
-import { Navbar } from "@/components/navbar";
+import { ConditionalNavbar } from "@/components/conditional-navbar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,7 +32,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider>
+    <ClerkProvider
+      appearance={{
+        elements: {
+          modalBackdrop: "z-0",
+          modalContent: "z-0",
+          card: "z-0",
+        },
+      }}
+    >
       <TRPCReactProvider>
         <html lang="en" suppressHydrationWarning>
           <body
@@ -40,7 +48,7 @@ export default function RootLayout({
           >
             <ThemeProvider defaultTheme="system" storageKey="buildbuddy-theme">
               <Toaster />
-              <Navbar />
+              <ConditionalNavbar />
               {children}
             </ThemeProvider>
           </body>

@@ -172,3 +172,11 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Clerk modal z-index fix */
+.cl-modalBackdrop,
+.cl-modalContent,
+.cl-card,
+[data-clerk-modal] {
+  z-index: 100 !important;
+}
