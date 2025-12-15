@@ -402,6 +402,58 @@ BuildBuddy supports custom themes with CSS variables:
 - Theme switching is handled by `ThemeProvider`
 - All components respect the current theme
 
+## 🚀 Deployment
+
+### Deploy to Netlify
+
+1. **Push your code to GitHub** (already done if you're reading this!)
+
+2. **Connect to Netlify:**
+   - Go to [Netlify](https://app.netlify.com) and sign in
+   - Click "Add new site" → "Import an existing project"
+   - Connect your GitHub repository
+   - Build settings are auto-detected from `netlify.toml` or use:
+     - Build command: `npm run build`
+     - Publish directory: `.next`
+
+3. **Set Environment Variables in Netlify:**
+   
+   Go to Site Settings → Environment Variables and add:
+   
+   ```bash
+   # Required
+   DATABASE_URL="your-production-database-url"
+   NEXT_PUBLIC_APP_URL="https://your-site.netlify.app"
+   OPENAI_API_KEY="your-openai-key"
+   E2B_API_KEY="your-e2b-key"
+   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY="your-clerk-public-key"
+   CLERK_SECRET_KEY="your-clerk-secret"
+   
+   # Optional
+   INNGEST_EVENT_KEY="your-event-key"
+   INNGEST_SIGNING_KEY="your-signing-key"
+   ```
+
+4. **Deploy:** Click "Deploy site" and Netlify will build and deploy automatically
+
+### Deploy to Vercel
+
+1. **Push your code to GitHub**
+
+2. **Import to Vercel:**
+   - Go to [Vercel](https://vercel.com) and sign in
+   - Click "Add New Project"
+   - Import your GitHub repository
+   - Configure environment variables (same as Netlify list above)
+   - Click "Deploy"
+
+### Important Notes
+
+- **`NEXT_PUBLIC_*` variables are PUBLIC** - They're embedded in the client bundle and visible to anyone. This is expected behavior for variables like `NEXT_PUBLIC_APP_URL` and `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`
+- **Never put secrets in `NEXT_PUBLIC_*` variables** - Use regular env vars for API keys and secrets
+- **Update Clerk redirect URLs** - Add your production domain to Clerk's allowed redirect URLs in the dashboard
+- **Database migrations** - Run `npx prisma migrate deploy` in production or use Prisma Cloud
+
 ## 📝 Key Technical Decisions
 
 ### Why tRPC?
