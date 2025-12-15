@@ -18,10 +18,8 @@ const Page = async () => {
   const queryClient = getQueryClient();
   const { userId } = await auth();
   
-  void queryClient.prefetchQuery(trpc.projects.getMany.queryOptions());
-  
-  // Prefetch usage data if user is authenticated
   if (userId) {
+    void queryClient.prefetchQuery(trpc.projects.getMany.queryOptions());
     void queryClient.prefetchQuery(trpc.usage.getStats.queryOptions());
   }
 
@@ -145,21 +143,23 @@ const Page = async () => {
           </section>
 
           {/* Projects */}
-          <section id="projects" className="mb-8">
-            <div className="text-center mb-4">
-              <h3 className="text-lg font-semibold">Your projects</h3>
-              <div className="mt-2">
-                <Button variant="ghost" size="sm" asChild>
-                  <Link href="#create-project">New project</Link>
-                </Button>
+          {userId && (
+            <section id="projects" className="mb-8">
+              <div className="text-center mb-4">
+                <h3 className="text-lg font-semibold">Your projects</h3>
+                <div className="mt-2">
+                  <Button variant="ghost" size="sm" asChild>
+                    <Link href="#create-project">New project</Link>
+                  </Button>
+                </div>
               </div>
-            </div>
-            <div className="max-w-5xl mx-auto">
-              <Suspense fallback={<div className="text-center">Loading projects...</div>}>
-                <ProjectList />
-              </Suspense>
-            </div>
-          </section>
+              <div className="max-w-5xl mx-auto">
+                <Suspense fallback={<div className="text-center">Loading projects...</div>}>
+                  <ProjectList />
+                </Suspense>
+              </div>
+            </section>
+          )}
         </div>
       </div>
     </HydrationBoundary>

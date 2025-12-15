@@ -17,16 +17,19 @@ export const MessagesContainer = ({ projectId, activeFragment, onFragmentSelect 
     const trpc = useTRPC();
     const queryClient = useQueryClient();
     const [isGenerating, setIsGenerating] = useState(false);
+    const previousMessagesLengthRef = useRef(0);
     
     const { data: messages, refetch } = useSuspenseQuery(trpc.messages.getMany.queryOptions({ projectId }));
 
-    // Auto-select the latest fragment when messages change
     useEffect(() => {
-        const latestWithFragment = [...messages].reverse().find((m) => !!m.fragment);
-        if (latestWithFragment && latestWithFragment.fragment?.id !== activeFragment?.id) {
-            onFragmentSelect(latestWithFragment.fragment!);
+        if (messages.length > previousMessagesLengthRef.current) {
+            const latestWithFragment = [...messages].reverse().find((m) => !!m.fragment);
+            if (latestWithFragment?.fragment) {
+                onFragmentSelect(latestWithFragment.fragment);
+            }
         }
-    }, [messages, activeFragment, onFragmentSelect]);
+        previousMessagesLengthRef.current = messages.length;
+    }, [messages, onFragmentSelect]);
 
     useEffect(() => {
         bottomRef.current?.scrollIntoView({ behavior: "smooth" });
