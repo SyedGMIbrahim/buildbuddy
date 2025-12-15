@@ -278,12 +278,12 @@ Create a `.env` file in the root directory:
 
 ```bash
 # Database - PostgreSQL connection string
-DATABASE_URL="postgresql://user:password@localhost:5432/buildbuddy?schema=public"
+DATABASE_URL="your-database-url"
 
 # Clerk Authentication
 # Get these from https://dashboard.clerk.com
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY="pk_test_..."
-CLERK_SECRET_KEY="sk_test_..."
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY="your_clerk_publishable_key_here"
+CLERK_SECRET_KEY="your_clerk_secret_key_here"
 
 # Optional: Custom sign-in/sign-up URLs
 NEXT_PUBLIC_CLERK_SIGN_IN_URL="/sign-in"
