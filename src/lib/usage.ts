@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/db";
-import { auth } from "@clerk/nextjs/server";
+import { auth, clerkClient } from "@clerk/nextjs/server";
 
 // Credit costs for different operations
 export const CREDIT_COSTS = {
@@ -12,6 +12,28 @@ export const PLAN_LIMITS = {
   free: 50,
   pro: 100,
 } as const;
+
+/**
+ * Get user's subscription plan from Clerk
+ */
+async function getUserPlan(userId: string): Promise<keyof typeof PLAN_LIMITS> {
+  try {
+    const client = await clerkClient();
+    const user = await client.users.getUser(userId);
+    const publicMetadata = user.publicMetadata || {};
+    const subscriptionPlan = publicMetadata.subscription_plan as string;
+
+    // Check if user has "pro" subscription
+    if (subscriptionPlan === "pro") {
+      return "pro";
+    }
+    
+    return "free";
+  } catch (error) {
+    console.error("Error fetching user plan:", error);
+    return "free"; // Default to free on error
+  }
+}
 
 /**
  * Get or create current billing period usage for a user
@@ -35,15 +57,27 @@ export async function getCurrentUsage(userId: string) {
 
   // Create new usage record if none exists for current period
   if (!usage) {
+    const userPlan = await getUserPlan(userId);
     usage = await prisma.usage.create({
       data: {
         userId,
         creditsUsed: 0,
-        creditsLimit: PLAN_LIMITS.free, // Default to free tier
+        creditsLimit: PLAN_LIMITS[userPlan],
         periodStart,
         periodEnd,
       },
     });
+  } else {
+    // Sync credit limit with current subscription plan
+    const userPlan = await getUserPlan(userId);
+    const expectedLimit = PLAN_LIMITS[userPlan];
+    
+    if (usage.creditsLimit !== expectedLimit) {
+      usage = await prisma.usage.update({
+        where: { id: usage.id },
+        data: { creditsLimit: expectedLimit },
+      });
+    }
   }
 
   return usage;
