@@ -37,10 +37,9 @@ export const MessageForm = ({ projectId }: Props) => {
         onSuccess: () => {
             form.reset();
             queryClient.invalidateQueries(trpc.messages.getMany.queryOptions({ projectId }));
-            //TODO: Invalidate usage status
+            queryClient.invalidateQueries(trpc.usage.getStats.queryOptions());
         },
         onError: (error) => {
-            //TODO: Redirect to pricing page if specific error
             toast.error(error.message);
         }
     }));

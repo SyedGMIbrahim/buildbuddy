@@ -34,6 +34,13 @@ Think of it as having an expert developer pair-programmer who can scaffold entir
 - **Fragment Management**: Each AI response can include code fragments (preview + files)
 - **Message Types**: Differentiated message types (RESULT, ERROR) for better UX
 
+### 💳 Billing & Rate Limiting
+- **Credit-Based System**: Fair usage tracking with credit consumption per action
+- **Flexible Plans**: Free tier (50 credits) and Pro tier (100 credits) via Clerk subscriptions
+- **Usage Dashboard**: Real-time credit usage display with progress bars and warnings
+- **Transparent Pricing**: Clear credit costs (10 credits per project, 5 credits per message)
+- **Seamless Upgrades**: One-click upgrade flow with Clerk's PricingTable component
+
 ### 🎨 Modern UI/UX
 - **Beautiful, Accessible Components**: Built on Radix UI primitives with full keyboard navigation and ARIA support
 - **Dark/Light/System Themes**: Seamless theme switching with system preference detection
@@ -43,6 +50,7 @@ Think of it as having an expert developer pair-programmer who can scaffold entir
 
 ### 🔐 Authentication & User Management
 - **Clerk Integration**: Production-ready authentication with email, social, and passwordless options
+- **Billing Integration**: Built-in subscription management with Clerk's billing features
 - **User-Specific Projects**: Each user's projects are isolated and secure
 - **Modal Sign-in/Sign-up**: Frictionless authentication flow without page redirects
 
@@ -74,7 +82,7 @@ BuildBuddy is built with modern, production-ready technologies chosen for perfor
 - **[SuperJSON](https://github.com/blitz-js/superjson)** - Enhanced JSON serialization for complex data types
 
 ### Authentication & Background Jobs
-- **[Clerk](https://clerk.com/)** - Complete user management with pre-built UI components
+- **[Clerk](https://clerk.com/)** - Complete user management with pre-built UI components and billing
 - **[Inngest](https://www.inngest.com/)** - Durable workflow engine for background jobs and AI agents
 - **[E2B Code Interpreter](https://e2b.dev/)** - Secure sandboxed code execution environment
 
@@ -95,7 +103,17 @@ BuildBuddy uses a clean, normalized database schema optimized for AI-assisted pr
 Represents authenticated users in the system.
 - `id` (String, PK) - Clerk user ID
 - `createdAt`, `updatedAt` - Timestamp tracking
-- **Relations**: Has many `Projects`
+- **Relations**: Has many `Projects`, has one `Usage`
+
+#### **Usage**
+Tracks user's credit consumption and billing period.
+- `id` (UUID, PK) - Unique usage record identifier
+- `userId` (String, FK, Unique) - Associated user
+- `creditsUsed` (Int, default: 0) - Credits consumed in current period
+- `creditsLimit` (Int, default: 50) - Maximum credits available (based on plan)
+- `periodStart`, `periodEnd` (DateTime) - Billing period boundaries
+- `createdAt`, `updatedAt` - Timestamp tracking
+- **Relations**: Belongs to `User`
 
 #### **Project**
 Represents a user's project with its AI conversation.
@@ -130,6 +148,7 @@ Represents generated code artifacts with preview capability.
 
 **Relationships:**
 - User `1:N` Project - A user can have multiple projects
+- User `1:1` Usage - Each user has one usage tracking record
 - Project `1:N` Message - Each project has a conversation thread
 - Message `1:1` Fragment - Some messages include generated code fragments
 
@@ -164,6 +183,7 @@ buildbuddy/
 │   │   │   └── inngest/      # Inngest webhook endpoint
 │   │   ├── projects/
 │   │   │   └── [projectId]/  # Dynamic project view route
+│   │   ├── pricing/          # Pricing & subscription page
 │   │   ├── sign-in/          # Clerk sign-in page
 │   │   └── sign-up/          # Clerk sign-up page
 │   │
@@ -181,18 +201,23 @@ buildbuddy/
 │   │   │       └── views/
 │   │   │           └── project-view.tsx
 │   │   │
-│   │   └── messages/
-│   │       ├── domain/       # Message business logic
-│   │       ├── server/       # Message tRPC router
-│   │       └── ui/           # Message components
-│   │           └── components/
-│   │               ├── message-card.tsx
-│   │               └── message-form.tsx
+│   │   ├── messages/
+│   │   │   ├── domain/       # Message business logic
+│   │   │   ├── server/       # Message tRPC router
+│   │   │   └── ui/           # Message components
+│   │   │       └── components/
+│   │   │           ├── message-card.tsx
+│   │   │           └── message-form.tsx
+│   │   │
+│   │   └── usage/
+│   │       └── server/       # Usage tracking tRPC router
+│   │           └── router.ts
 │   │
 │   ├── components/           # Shared UI components
 │   │   ├── navbar.tsx
 │   │   ├── theme-provider.tsx
 │   │   ├── user-control.tsx
+│   │   ├── usage-card.tsx    # Credit usage display
 │   │   └── ui/              # Radix UI component wrappers
 │   │       ├── button.tsx
 │   │       ├── card.tsx
@@ -215,6 +240,7 @@ buildbuddy/
 │   │
 │   ├── lib/                 # Shared utilities
 │   │   ├── db.ts           # Prisma client singleton
+│   │   ├── usage.ts        # Credit management utilities
 │   │   └── utils.ts        # Helper functions
 │   │
 │   ├── hooks/              # Custom React hooks
@@ -294,6 +320,9 @@ NEXT_PUBLIC_CLERK_SIGN_UP_URL="/sign-up"
 INNGEST_EVENT_KEY="your-event-key"
 INNGEST_SIGNING_KEY="your-signing-key"
 
+# Optional: Clerk Billing (if using subscriptions)
+NEXT_PUBLIC_CLERK_BILLING_URL="/pricing"
+
 # Optional: E2B Code Interpreter
 # Get this from https://e2b.dev/docs
 E2B_API_KEY="your-e2b-api-key"
@@ -357,18 +386,23 @@ Open [http://localhost:3000](http://localhost:3000) in your browser to see the a
 ### 1. Project Creation Flow
 When a user creates a new project:
 - User describes their idea in natural language
+- Credit check is performed (10 credits required)
+- If insufficient credits, user is prompted to upgrade
 - The description is sent to the AI via tRPC mutation
 - Inngest triggers a background job to process the request
 - AI generates project structure, components, and code
+- Credits are consumed upon successful creation
 - Results are streamed back and stored in the database
 - User is redirected to the project view
 
 ### 2. AI Conversation System
 Each project has its own conversation thread:
 - Messages are stored with role (USER/ASSISTANT) and type (RESULT/ERROR)
+- Each message costs 5 credits to send
 - Real-time polling keeps the UI synchronized with AI responses
 - Fragments (code artifacts) are linked to assistant messages
 - Each fragment includes a sandbox URL for live preview
+- Usage statistics are automatically updated after each action
 
 ### 3. Code Generation & Preview
 Generated code is executed in secure E2B sandboxes:
@@ -377,7 +411,16 @@ Generated code is executed in secure E2B sandboxes:
 - Preview URL is generated and stored with the fragment
 - Users can interact with the live application
 
-### 4. Type-Safe Data Flow
+### 4. Billing & Credit System
+Credit-based rate limiting ensures fair usage:
+- New users start with 50 credits (Free plan)
+- Pro subscribers get 100 credits per billing period
+- Actions consume credits: 10 for projects, 5 for messages
+- Usage is tracked per billing period with automatic reset
+- Real-time usage display shows remaining credits
+- Clerk handles subscription management and upgrades
+
+### 5. Type-Safe Data Flow
 ```
 User Input → Zod Validation → tRPC Mutation → Prisma Query → PostgreSQL
      ↓
