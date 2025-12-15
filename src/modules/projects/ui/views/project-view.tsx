@@ -15,7 +15,7 @@ export const ProjectView = ({ projectId }: Props) => {
     const [activeFragment, setActiveFragment] = useState<Fragment | null>(null);
 
     return (
-        <div className="h-screen flex flex-col">
+        <div className="h-screen flex flex-col overflow-hidden">
             <Suspense fallback={<div className="border-b px-4 py-3">Loading...</div>}>
                 <ProjectHeader projectId={projectId} />
             </Suspense>
