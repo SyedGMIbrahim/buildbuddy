@@ -310,6 +310,7 @@ DATABASE_URL="your-database-url"
 # Get these from https://dashboard.clerk.com
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY="your_clerk_publishable_key_here"
 CLERK_SECRET_KEY="your_clerk_secret_key_here"
+CLERK_WEBHOOK_SECRET="your_clerk_webhook_secret_here"
 
 # Optional: Custom sign-in/sign-up URLs
 NEXT_PUBLIC_CLERK_SIGN_IN_URL="/sign-in"
@@ -359,6 +360,10 @@ npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) in your browser to see the application.
+
+7. **Set up Clerk webhook for subscription sync** (Optional but recommended for billing)
+
+Follow the instructions in [WEBHOOK_SETUP.md](WEBHOOK_SETUP.md) to configure Clerk webhooks for automatic credit synchronization when users upgrade/downgrade their subscription.
 
 ### 🎉 You're ready to build!
 
