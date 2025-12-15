@@ -8,4 +8,6 @@ export const { GET, POST, PUT } = serve({
   functions: [
     codeAgentFunction,
   ],
+  signingKey: process.env.INNGEST_SIGNING_KEY,
+  servePath: "/api/inngest",
 });
