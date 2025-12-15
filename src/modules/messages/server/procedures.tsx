@@ -1,6 +1,8 @@
 import { inngest } from "@/inngest/client";
 import { prisma } from "@/lib/db";
+import { consumeCredits, CREDIT_COSTS } from "@/lib/usage";
 import { baseProcedure, createTRPCRouter, protectedProcedure } from "@/trpc/init";
+import { TRPCError } from "@trpc/server";
 import z from "zod";
 
 export const messagesRouter = createTRPCRouter({
@@ -34,7 +36,17 @@ export const messagesRouter = createTRPCRouter({
                 projectId: z.string().min(1, { message: "Project ID is required" }),
             })
         )
-        .mutation(async ({ input }) => {
+        .mutation(async ({ input, ctx }) => {
+            // Check and consume credits before sending message
+            try {
+                await consumeCredits(ctx.userId!, CREDIT_COSTS.SEND_MESSAGE);
+            } catch (error) {
+                throw new TRPCError({
+                    code: "FORBIDDEN",
+                    message: error instanceof Error ? error.message : "Insufficient credits",
+                });
+            }
+
             const createdMessage = await prisma.message.create({
                 data: {
                     projectId: input.projectId,

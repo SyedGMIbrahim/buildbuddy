@@ -31,6 +31,24 @@ model User {
   updatedAt DateTime @updatedAt
 
   projects Project[]
+  usage Usage[]
+}
+
+model Usage {
+  id String @id @default(uuid())
+  userId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  creditsUsed Int @default(0)
+  creditsLimit Int @default(50) // Free tier default
+  
+  periodStart DateTime @default(now())
+  periodEnd DateTime
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@index([userId, periodStart])
 }
 
 enum MessageRole {

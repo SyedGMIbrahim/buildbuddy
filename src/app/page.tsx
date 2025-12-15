@@ -9,12 +9,21 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Sparkles, Wand2, Eye, UploadCloud } from "lucide-react";
 import { CardBody, CardContainer, CardItem } from "@/components/ui/3d-card";
+import { auth } from "@clerk/nextjs/server";
+import { UsageCard } from "@/components/usage-card";
 
 export const dynamic = "force-dynamic";
 
 const Page = async () => {
   const queryClient = getQueryClient();
+  const { userId } = await auth();
+  
   void queryClient.prefetchQuery(trpc.projects.getMany.queryOptions());
+  
+  // Prefetch usage data if user is authenticated
+  if (userId) {
+    void queryClient.prefetchQuery(trpc.usage.getStats.queryOptions());
+  }
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
@@ -62,6 +71,13 @@ const Page = async () => {
 
           {/* Create Project */}
           <section id="create-project" className="mb-14">
+            {userId && (
+              <div className="max-w-md mx-auto mb-6">
+                <Suspense fallback={<div className="h-32 bg-muted/20 rounded-xl animate-pulse" />}>
+                  <UsageCard />
+                </Suspense>
+              </div>
+            )}
             <CardContainer className="max-w-7xl mx-auto">
               <CardBody className="bg-card text-card-foreground flex flex-col gap-6 rounded-xl border shadow-sm  ">
                   <ProjectForm />

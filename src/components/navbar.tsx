@@ -15,7 +15,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { ChevronDownIcon, HomeIcon, MonitorIcon, MoonIcon, PaletteIcon, SunIcon } from "lucide-react";
+import { ChevronDownIcon, CreditCardIcon, HomeIcon, MonitorIcon, MoonIcon, PaletteIcon, SunIcon } from "lucide-react";
 import { UserControl } from "@/components/user-control";
 
 export function Navbar() {
@@ -43,6 +43,12 @@ export function Navbar() {
               <Link href="/" className="flex items-center gap-2">
                 <HomeIcon className="size-4" />
                 Dashboard
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href="/pricing" className="flex items-center gap-2">
+                <CreditCardIcon className="size-4" />
+                Pricing
               </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />

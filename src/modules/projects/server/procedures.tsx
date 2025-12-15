@@ -1,5 +1,6 @@
 import { inngest } from "@/inngest/client";
 import { prisma } from "@/lib/db";
+import { consumeCredits, CREDIT_COSTS } from "@/lib/usage";
 import { baseProcedure, createTRPCRouter, protectedProcedure } from "@/trpc/init";
 import { TRPCError } from "@trpc/server";
 import { generateSlug } from "random-word-slugs";
@@ -47,6 +48,16 @@ export const projectsRouter = createTRPCRouter({
             })
         )
         .mutation(async ({ input, ctx }) => {
+            // Check and consume credits before creating project
+            try {
+                await consumeCredits(ctx.userId!, CREDIT_COSTS.CREATE_PROJECT);
+            } catch (error) {
+                throw new TRPCError({
+                    code: "FORBIDDEN",
+                    message: error instanceof Error ? error.message : "Insufficient credits",
+                });
+            }
+
             // First, ensure the user exists in our database
             await prisma.user.upsert({
                 where: { id: ctx.userId! },
