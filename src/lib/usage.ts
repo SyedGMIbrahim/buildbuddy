@@ -45,8 +45,8 @@ async function getUserPlan(userId: string): Promise<keyof typeof PLAN_LIMITS> {
  */
 export async function getCurrentUsage(userId: string) {
   const now = new Date();
-  const periodStart = new Date(now.getFullYear(), now.getMonth(), 1); // Start of current month
-  const periodEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59); // End of current month
+  const periodStart = new Date(now.getFullYear(), now.getMonth(), 1);
+  const periodEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
 
   let usage = await prisma.usage.findFirst({
     where: {
@@ -61,6 +61,12 @@ export async function getCurrentUsage(userId: string) {
   });
 
   if (!usage) {
+    await prisma.user.upsert({
+      where: { id: userId },
+      update: {},
+      create: { id: userId },
+    });
+
     const userPlan = await getUserPlan(userId);
     usage = await prisma.usage.create({
       data: {
