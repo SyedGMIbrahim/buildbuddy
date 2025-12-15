@@ -44,7 +44,7 @@ export default function RootLayout({
       <TRPCReactProvider>
         <html lang="en" suppressHydrationWarning>
           <body
-            className={`${geistSans.variable} ${geistMono.variable} antialiased overflow-hidden`}
+            className={`${geistSans.variable} ${geistMono.variable} antialiased`}
           >
             <ThemeProvider defaultTheme="system" storageKey="buildbuddy-theme">
               <Toaster />
