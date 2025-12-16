@@ -4,7 +4,18 @@ import { MessageCard } from "./message-card";
 import { MessageForm } from "./message-form";
 import { useEffect, useRef, useState } from "react";
 import { Fragment } from "@/generated/prisma";
-import { Loader2Icon } from "lucide-react";
+import { Loader2Icon, SparklesIcon, CodeIcon, WandIcon } from "lucide-react";
+
+const LOADING_PHRASES = [
+    "Generating code...",
+    "Crafting your project...",
+    "Building components...",
+    "Scaffolding files...",
+    "Writing magic...",
+    "Creating your app...",
+    "Assembling pieces...",
+    "Cooking up code...",
+];
 
 interface Props {
     projectId: string;
@@ -17,6 +28,7 @@ export const MessagesContainer = ({ projectId, activeFragment, onFragmentSelect 
     const trpc = useTRPC();
     const queryClient = useQueryClient();
     const [isGenerating, setIsGenerating] = useState(false);
+    const [loadingPhraseIndex, setLoadingPhraseIndex] = useState(0);
     const previousMessagesLengthRef = useRef(0);
     
     const { data: messages, refetch } = useSuspenseQuery(trpc.messages.getMany.queryOptions({ projectId }));
@@ -59,6 +71,15 @@ export const MessagesContainer = ({ projectId, activeFragment, onFragmentSelect 
         }
     }, [isGenerating, projectId, queryClient, trpc.messages.getMany, refetch]);
 
+    useEffect(() => {
+        if (isGenerating) {
+            const interval = setInterval(() => {
+                setLoadingPhraseIndex((prev) => (prev + 1) % LOADING_PHRASES.length);
+            }, 2000);
+            return () => clearInterval(interval);
+        }
+    }, [isGenerating]);
+
     return (
         <div className="flex flex-col flex-1 min-h-0">
             <div className="flex-1 min-h-0 overflow-y-auto">
@@ -76,9 +97,23 @@ export const MessagesContainer = ({ projectId, activeFragment, onFragmentSelect 
                         />
                     ))}
                     {isGenerating && (
-                        <div className="flex items-center gap-2 pl-2 pb-4 text-muted-foreground">
-                            <Loader2Icon className="size-4 animate-spin" />
-                            <span className="text-sm">Generating code...</span>
+                        <div className="flex items-start gap-3 pl-2 pb-4">
+                            <div className="relative">
+                                <div className="absolute inset-0 bg-primary/20 rounded-full blur-md animate-pulse" />
+                                <div className="relative bg-primary/10 p-2 rounded-full">
+                                    <Loader2Icon className="size-4 text-primary animate-spin" />
+                                </div>
+                            </div>
+                            <div className="flex flex-col gap-1">
+                                <span className="text-sm font-medium text-foreground animate-pulse">
+                                    {LOADING_PHRASES[loadingPhraseIndex]}
+                                </span>
+                                <div className="flex items-center gap-1.5">
+                                    <SparklesIcon className="size-3 text-primary animate-pulse" />
+                                    <CodeIcon className="size-3 text-primary animate-pulse delay-100" />
+                                    <WandIcon className="size-3 text-primary animate-pulse delay-200" />
+                                </div>
+                            </div>
                         </div>
                     )}
                     <div ref={bottomRef} />
